@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desafio Contra o Consumismo</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #1e40af;
+      --bg: #f0f9ff;
+      --card: #ffffff;
+      --text: #1f2937;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --xp-bar: #4ade80;
+      --gold: #fbbf24;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #fdfcfb, #e2d1c3);
+      background-attachment: fixed;
+    }
+
+    body.login-screen { background: linear-gradient(to right, #e0f2fe, #bae6fd); }
+    body.register-screen { background: linear-gradient(to right, #ede9fe, #c7d2fe); }
+    body.main-screen { background: linear-gradient(to right, #dcfce7, #bbf7d0); }
+    body.admin-screen { background: linear-gradient(to right, #fef3c7, #fde68a); }
+
+    .container {
+      max-width: 720px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 10px 25px var(--shadow);
+      margin-bottom: 1.5rem;
+    }
+
+    h1, h2, h3, h4 {
+      text-align: center;
+      color: var(--text);
+    }
+
+    .input, .button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .button {
+      background-color: var(--primary);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+
+    .button:hover {
+      background-color: var(--secondary);
+      transform: scale(1.02);
+    }
+
+    .toggle-link {
+      text-align: center;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .toggle-link:hover {
+      text-decoration: underline;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: var(--primary);
+      padding: 0.5rem;
+      border-radius: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    nav button {
+      flex: 1;
+      background: none;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    nav button:hover {
+      text-decoration: underline;
+    }
+
+    .hidden { display: none; }
+    .tab-content { animation: fade 0.4s ease-in-out; }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .xp-bar-container {
+      background-color: #e5e7eb;
+      border-radius: 1rem;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+
+    .xp-bar-fill {
+      background-color: var(--xp-bar);
+      height: 1rem;
+      width: 0%;
+      transition: width 0.5s ease-in-out;
+    }
+
+    .admin-button {
+      background-color: var(--gold);
+      color: var(--text);
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+
+    /* Responsivo para celular */
+    @media (max-width: 600px) {
+      .container {
+        padding: 0.5rem;
+      }
+
+      .card {
+        padding: 1.2rem;
+        border-radius: 1rem;
+      }
+
+      h1, h2 {
+        font-size: 1.5rem;
+      }
+
+      .input, .button {
+        padding: 0.8rem;
+        font-size: 1.1rem;
+      }
+
+      nav {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      nav button {
+        padding: 0.7rem;
+        font-size: 1rem;
+      }
+
+      .xp-bar-container {
+        height: 0.75rem;
+      }
+
+      .xp-bar-fill {
+        height: 0.75rem;
+      }
+
+      .button.small-btn {
+        margin-left: 0.5rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body class="login-screen">
+  <div class="container">
+    <h1>🌱 Desafio Contra o Consumismo</h1>
+
+    <div id="mainContent" class="card hidden">
+      <nav id="navbar">
+        <button onclick="showTab('desafios')">Desafios</button>
+        <button id="adminBtn" onclick="showTab('admin')" class="hidden">Área Admin</button>
+        <button onclick="confirmLogout()">Sair</button>
+      </nav>
+
+      <div id="userInfo"></div>
+      <div id="tab-desafios" class="tab tab-content"></div>
+      <div id="tab-admin" class="tab tab-content hidden">
+        <h3>👑 Área do Administrador</h3>
+        <div id="adminContent"></div>
+      </div>
+    </div>
+
+    <div id="loginCard" class="card">
+      <h2>Login</h2>
+      <input class="input" id="loginName" placeholder="Usuário" />
+      <input class="input" id="loginPassword" type="password" placeholder="Senha" />
+      <button class="button" onclick="login()">Entrar</button>
+      <div class="toggle-link" onclick="toggleAuth(true)">Não tem conta? Cadastre-se</div>
+    </div>
+
+    <div id="registerCard" class="card hidden">
+      <h2>Cadastro</h2>
+      <input class="input" id="registerName" placeholder="Usuário" />
+      <input class="input" id="registerPassword" type="password" placeholder="Senha" />
+      <button class="button" onclick="register()">Cadastrar</button>
+      <div class="toggle-link" onclick="toggleAuth(false)">Já tem conta? Entrar</div>
+    </div>
+  </div>
+
+  <script>
+    let users = JSON.parse(localStorage.getItem('users') || '{}');
+    let currentUser = null;
+    users['Guilherme Santana'] = users['Guilherme Santana'] || { password: 'Gg1234**', score: 0, level: 1, challenges: [] };
+
+    function toggleAuth(showRegister) {
+      document.body.className = showRegister ? 'register-screen' : 'login-screen';
+      document.getElementById('loginCard').classList.toggle('hidden', showRegister);
+      document.getElementById('registerCard').classList.toggle('hidden', !showRegister);
+    }
+
+    function register() {
+      const name = document.getElementById('registerName').value.trim();
+      const pass = document.getElementById('registerPassword').value.trim();
+      if (!name || !pass) return alert('Preencha todos os campos.');
+      users[name] = { password: pass, score: 0, level: 1, challenges: [] };
+      localStorage.setItem('users', JSON.stringify(users));
+      toggleAuth(false);
+    }
+
+    function login() {
+      const name = document.getElementById('loginName').value.trim();
+      const pass = document.getElementById('loginPassword').value.trim();
+      if (users[name] && users[name].password === pass) {
+        currentUser = name;
+        const isAdmin = name === 'Guilherme Santana';
+        document.body.className = isAdmin ? 'admin-screen' : 'main-screen';
+        document.getElementById('mainContent').classList.remove('hidden');
+        document.getElementById('loginCard').classList.add('hidden');
+        document.getElementById('registerCard').classList.add('hidden');
+        document.getElementById('adminBtn').classList.toggle('hidden', !isAdmin);
+        loadTabs();
+      } else {
+        alert("Usuário ou senha incorretos.");
+      }
+    }
+
+    function confirmLogout() {
+      if (confirm("Tem certeza que deseja sair?")) logout();
+    }
+
+    function logout() {
+      location.reload();
+    }
+
+    function showTab(tab) {
+      if (tab === 'admin' && currentUser !== 'Guilherme Santana') return;
+      document.querySelectorAll('.tab').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+    }
+
+    function loadTabs() {
+      const user = users[currentUser];
+      const desafios = ["Evite compras online por 24h", "Reutilize algo hoje", "Faça um orçamento da semana"];
+      const userChallenges = user.challenges || [];
+      const allChallenges = [...desafios.map(d => `📌 ${d}`), ...userChallenges.map(c => `🎯 ${c}`)];
+
+      const challengeItems = allChallenges.map(desc => `<li>${desc} <button class='button small-btn' onclick='acceptChallenge("${desc}")'>Aceitar</button></li>`).join('');
+
+      const xpPercent = Math.min(user.score % 100, 100);
+      const level = Math.floor(user.score / 100) + 1;
+
+      document.getElementById('tab-desafios').innerHTML = `
+        <h3>Desafios</h3>
+        <p><strong>Nível:</strong> ${level}</p>
+        <div class="xp-bar-container"><div class="xp-bar-fill" style="width: ${xpPercent}%"></div></div>
+        <ul>${challengeItems}</ul>
+        <button class='button' onclick='inviteFriend()'>📨 Convidar Amigo</button>
+        <button class='button' onclick='sendChallenge()'>🎯 Enviar Desafio</button>
+      `;
+
+      document.getElementById('userInfo').innerHTML = `<div class='card'>👋 Bem-vindo, <strong>${currentUser}</strong>!</div>`;
+
+      if (currentUser === 'Guilherme Santana') {
+        const ranking = Object.entries(users).sort((a, b) => b[1].score - a[1].score)
+          .map(([name, data], index) => `<li>#${index + 1} - ${name}: ${data.score} pontos</li>`).join('');
+
+        const totalUsuarios = Object.keys(users).length;
+
+        document.getElementById('adminContent').innerHTML = `
+          <h4>📊 Ranking de Pontuação</h4>
+          <ol>${ranking}</ol>
+          <h4>👥 Total de Usuários: ${totalUsuarios}</h4>
+          <h4>🛠️ Gerenciar Usuários</h4>
+          <ul>${Object.entries(users).map(([name, data]) => `<li>${name} - Pontos: ${data.score}</li>`).join('')}</ul>
+          <button class="admin-button" onclick="simulatePix()">💸 Enviar PIX ao vencedor</button>
+        `;
+      }
+    }
+
+    function acceptChallenge(desc) {
+      users[currentUser].score += 10;
+      localStorage.setItem('users', JSON.stringify(users));
+      loadTabs();
+      alert("Desafio aceito! +10 pontos");
+    }
+
+    function inviteFriend() {
+      const nome = prompt("Digite o nome do amigo que você quer convidar:");
+      if (nome) alert(`Convite enviado para ${nome}!`);
+    }
+
+    function sendChallenge() {
+      const nome = prompt("Para quem é esse desafio?");
+      const desafio = prompt("Digite o desafio que deseja enviar:");
+      if (!nome || !desafio) return alert("Preencha os dois campos!");
+      for (const user in users) {
+        if (user !== currentUser && user === nome) {
+          users[user].challenges = users[user].challenges || [];
+          users[user].challenges.push(desafio);
+        }
+      }
+      localStorage.setItem('users', JSON.stringify(users));
+      alert("Desafio enviado com sucesso!");
+    }
+
+    function simulatePix() {
+      const vencedor = Object.entries(users).sort((a, b) => b[1].score - a[1].score)[0];
+      alert(`PIX enviado para ${vencedor[0]}! (Simulado)`);
+    }
+  </script>
+</body>
+</html>
